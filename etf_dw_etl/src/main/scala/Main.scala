@@ -1,6 +1,5 @@
 import org.apache.spark.sql.SparkSession
 import org.tomlj.TomlParseResult
-import scala.jdk.OptionConverters._
 
 object MainApp {
   def main(args: Array[String]): Unit = {
@@ -15,7 +14,7 @@ object MainApp {
         config.errors().forEach(error => println(s"Config error: $error"))
       }
       else {
-        val distributionsFolder = config.getString("folder_path.distributions_folder")
+        val distributionsFolder = config.getString("folder_paths.distributions_folder")
 
         println(s"The test was successful: $distributionsFolder")
 
