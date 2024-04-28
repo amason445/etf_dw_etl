@@ -1,5 +1,5 @@
 import org.apache.spark.sql.SparkSession
-//import org.tomlj.TomlParseResult
+import org.apache.spark.sql.functions.to_date
 
 import java.nio.file.{Files, Paths}
 import scala.collection.JavaConverters._
@@ -11,7 +11,9 @@ object MainApp {
       .config("spark.master","local")
       .getOrCreate()
 
-      val directory_path = "C:\\Users\\Administrator\\OneDrive\\SQLServer\\ETF_DW\\RawData\\Distributions\\"
+      ConfigLoader.loadProperties()
+
+      val directory_path = ConfigLoader.getDistributionsFolderPath()
       
       val csvFiles = Files.list(Paths.get(directory_path))
         .iterator()
@@ -22,14 +24,16 @@ object MainApp {
       for (csv_file <- csvFiles) {
         println(csv_file)
 
-        val test_df = spark.read
+        val raw_df = spark.read
         .option("header", "true")
         .csv(csv_file.toString)
 
-        //test_df = test_df.withColumn(("ExDate"))
+        val df_ExDate = raw_df.withColumn("ExDate", to_date(raw_df("ExDate"), "M/d/yyyy"))
+        val df_RecordDate = df_ExDate.withColumn("RecordDate", to_date(df_ExDate("RecordDate"), "M/d/yyyy"))
+        val df_PayableDate = df_RecordDate.withColumn("PayableDate", to_date(df_RecordDate("PayableDate"), "M/d/yyyy"))
 
-        test_df.printSchema()
-        test_df.show()
+        df_PayableDate.printSchema()
+        df_PayableDate.show()
 
       }
 

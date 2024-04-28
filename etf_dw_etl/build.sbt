@@ -14,10 +14,6 @@ lazy val root = project
     
     //spark libraries
     libraryDependencies += "org.apache.spark" %% "spark-core" % "3.5.1",
-    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.1",
-
-    //libraryDependencies += "org.tomlj" % "tomlj" % "1.1.1",
-
-    //dependencyOverrides += "org.antlr" % "antlr4-runtime" % "4.9.3"
+    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.1"
     
   )

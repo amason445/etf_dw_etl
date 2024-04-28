@@ -1,25 +1,28 @@
-// import java.io.InputStream
-// import org.tomlj.Toml
-// import org.tomlj.TomlParseResult
+import java.util.Properties
+import scala.io.Source
 
-// object ConfigLoader {
-//   def loadConfig(resourceName: String): TomlParseResult = {
-//     // Use the class loader to get the resource as a stream
-//     val stream: InputStream = getClass.getClassLoader.getResourceAsStream(resourceName)
-//     if (stream == null) {
-//       throw new IllegalArgumentException(s"Resource not found: $resourceName")
-//     }
-//     Toml.parse(stream)
-//   }
-// }
+object ConfigLoader {
+  
+  val props = new Properties()
 
+  def loadProperties(): Unit = {
+    // Load the properties file from the class path
+    val inputStream = getClass.getResourceAsStream("/config.properties")
+    if (inputStream != null) {
+      props.load(inputStream)
+    } else {
+        throw new Exception("Exception ocurred when scraping property file.")
+    }
+  }
 
-// val config: TomlParseResult = ConfigLoader.loadConfig("config.toml")
-
-// if (config.hasErrors()) {
-//   config.errors().forEach(error => println(s"Config error: $error"))
-// }
-
-// val distributionsFolder = config.getString("folder_paths.distributions_folder")
-
-// println(s"The folder parse was successful: $distributionsFolder")
+  def getDistributionsFolderPath(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("distributions_folder")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting distriubtions folder: " + e.getMessage())
+    }
+  }
+}
