@@ -15,6 +15,28 @@ object ConfigLoader {
     }
   }
 
+  def getSparkTempFolderPath(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("spark_temp_folder")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting Spark Temp Folder: " + e.getMessage())
+    }
+  } 
+
+  def getJDBCFilePath(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("jdbc_jar")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting JDBC Jar File: " + e.getMessage())
+    }
+  } 
+
   def getDistributionsFolderPath(): String = {
     // Retrive the distributions folder path as a string
     try {
@@ -25,4 +47,8 @@ object ConfigLoader {
           throw new Exception("Exception thrown when getting distriubtions folder: " + e.getMessage())
     }
   }
+
+
+
+
 }
