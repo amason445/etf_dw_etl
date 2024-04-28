@@ -13,9 +13,11 @@ lazy val root = project
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
     
     //spark libraries
-    libraryDependencies += "org.apache.spark" %% "spark-core" % "3.3.4",
-    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.3.4",
+    libraryDependencies += "org.apache.spark" %% "spark-core" % "3.5.1",
+    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.5.1",
 
-    libraryDependencies += "org.tomlj" % "tomlj" % "1.1.1"
+    //libraryDependencies += "org.tomlj" % "tomlj" % "1.1.1",
+
+    //dependencyOverrides += "org.antlr" % "antlr4-runtime" % "4.9.3"
     
   )

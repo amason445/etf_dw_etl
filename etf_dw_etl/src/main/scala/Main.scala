@@ -1,5 +1,8 @@
 import org.apache.spark.sql.SparkSession
-import org.tomlj.TomlParseResult
+//import org.tomlj.TomlParseResult
+
+import java.nio.file.{Files, Paths}
+import scala.collection.JavaConverters._
 
 object MainApp {
   def main(args: Array[String]): Unit = {
@@ -8,15 +11,25 @@ object MainApp {
       .config("spark.master","local")
       .getOrCreate()
 
-      val config: TomlParseResult = ConfigLoader.loadConfig("config.toml")
+      val directory_path = "C:\\Users\\Administrator\\OneDrive\\SQLServer\\ETF_DW\\RawData\\Distributions\\"
+      
+      val csvFiles = Files.list(Paths.get(directory_path))
+        .iterator()
+        .asScala
+        .filter(_.toString.endsWith(".csv"))
+        .toList
 
-      if (config.hasErrors()) {
-        config.errors().forEach(error => println(s"Config error: $error"))
-      }
-      else {
-        val distributionsFolder = config.getString("folder_paths.distributions_folder")
+      for (csv_file <- csvFiles) {
+        println(csv_file)
 
-        println(s"The test was successful: $distributionsFolder")
+        val test_df = spark.read
+        .option("header", "true")
+        .csv(csv_file.toString)
+
+        //test_df = test_df.withColumn(("ExDate"))
+
+        test_df.printSchema()
+        test_df.show()
 
       }
 

@@ -6,3 +6,4 @@ hs_err_pid*
 .metals/metals.mv.db
 etf_dw_etl/README.md
 .vscode/settings.json
+etf_dw_etl/tree.txt
