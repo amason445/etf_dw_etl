@@ -2,8 +2,8 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.to_date
 
 
-import java.nio.file.{Files, Paths}
 import scala.collection.JavaConverters._
+import org.apache.hadoop.hdfs.util.ByteArrayManager.Conf
 
 object MainApp {
   def main(args: Array[String]): Unit = {
@@ -12,43 +12,34 @@ object MainApp {
       ConfigLoader.loadProperties()
       
       val spark_temp_folder = ConfigLoader.getSparkTempFolderPath()
-      val jdbc_path = ConfigLoader.getJDBCFilePath()
 
-      val directory_path = ConfigLoader.getDistributionsFolderPath()
+      val jdbc_server_name = ConfigLoader.getJDBCServerName()
+      val jdbc_server_port = ConfigLoader.getJDBCServerPort()
+      val jdbc_database_name = ConfigLoader.getJDBCDatabaseName()
+      val jdbc_server_username = ConfigLoader.getJDBCServerUsername()
+      val jdbc_server_password = ConfigLoader.getJDBCServerPassword()
+
+      val distributions_folder_path = ConfigLoader.getDistributionsFolderPath()
+
+      val jdbcUrl = "jdbc:sqlserver://" + jdbc_server_name + ":" + jdbc_server_port + ";databaseName=" + jdbc_database_name +";encrypt=false"
+
+      val connectionProperties = new java.util.Properties()
+      connectionProperties.put("user", jdbc_server_username)
+      connectionProperties.put("password", jdbc_server_password)
 
       val spark = SparkSession.builder()
       .appName("ETF_DW ETL Package")
       .config("spark.master","local")
       .config("spark.local.dir", spark_temp_folder)
-      .config("spark.jars", jdbc_path)
       .getOrCreate()
       
-      val csvFiles = Files.list(Paths.get(directory_path))
-        .iterator()
-        .asScala
-        .filter(_.toString.endsWith(".csv"))
-        .toList
+      val DistributionsJob = new DistributionsFactTable(spark, distributions_folder_path)
 
-      for (csv_file <- csvFiles) {
-        println(csv_file)
-
-        val raw_df = spark.read
-        .option("header", "true")
-        .csv(csv_file.toString)
-
-        // convert date columns to date type
-        val df_ExDate = raw_df.withColumn("ExDate", to_date(raw_df("ExDate"), "M/d/yyyy"))
-        val df_RecordDate = df_ExDate.withColumn("RecordDate", to_date(df_ExDate("RecordDate"), "M/d/yyyy"))
-        val df_PayableDate = df_RecordDate.withColumn("PayableDate", to_date(df_RecordDate("PayableDate"), "M/d/yyyy"))
-
-        //convert columns to float
-        val columnsToConvert = Seq("TotalDistribution", "Income", "ShortTermCapitalGain", "LongTermCapitalGain", "ReturnOfCapital")
-        val df_TotalDistribution = Utilities.convertColumnsToFloat(df_PayableDate, columnsToConvert)
-
-        df_TotalDistribution.printSchema()
-        df_TotalDistribution.show()
-
-      }
+      val DistributionsDF = DistributionsJob.generateDistibutionDataFrame()
+        
+      DistributionsDF.write
+        .mode("append")
+        .jdbc(jdbcUrl, "etf_raw.fact_fund_distributions", connectionProperties)
 
       spark.stop()
 

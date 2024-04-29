@@ -26,14 +26,58 @@ object ConfigLoader {
     }
   } 
 
-  def getJDBCFilePath(): String = {
+    def getJDBCServerName(): String = {
     // Retrive the distributions folder path as a string
     try {
-      val distributionsFolder = props.getProperty("jdbc_jar")
+      val distributionsFolder = props.getProperty("server_name")
       return distributionsFolder
     } catch {
         case e: Exception =>
-          throw new Exception("Exception thrown when getting JDBC Jar File: " + e.getMessage())
+          throw new Exception("Exception thrown when getting JDBC Server Name: " + e.getMessage())
+    }
+  } 
+
+    def getJDBCServerPort(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("server_port")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting JDBC Server Port: " + e.getMessage())
+    }
+  } 
+
+    def getJDBCDatabaseName(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("database_name")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting SQL Server Target Database Name: " + e.getMessage())
+    }
+  } 
+
+    def getJDBCServerUsername(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("server_username")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting JDBC Server Username: " + e.getMessage())
+    }
+  } 
+
+    def getJDBCServerPassword(): String = {
+    // Retrive the distributions folder path as a string
+    try {
+      val distributionsFolder = props.getProperty("server_password")
+      return distributionsFolder
+    } catch {
+        case e: Exception =>
+          throw new Exception("Exception thrown when getting JDBC Server Password: " + e.getMessage())
     }
   } 
 
@@ -47,8 +91,5 @@ object ConfigLoader {
           throw new Exception("Exception thrown when getting distriubtions folder: " + e.getMessage())
     }
   }
-
-
-
 
 }

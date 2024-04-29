@@ -11,6 +11,8 @@ lazy val root = project
     javaOptions += "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED",
 
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
+
+    libraryDependencies += "com.microsoft.sqlserver" % "mssql-jdbc" % "12.2.0.jre11",
     
     //spark libraries
     libraryDependencies += "org.apache.spark" %% "spark-core" % "3.5.1",
